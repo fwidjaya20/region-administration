@@ -10,4 +10,5 @@ require (
 	github.com/jmoiron/sqlx v1.2.0 // indirect
 	github.com/lib/pq v1.7.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/rs/cors v1.7.0 // indirect
 )
