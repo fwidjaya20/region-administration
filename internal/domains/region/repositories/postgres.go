@@ -3,7 +3,7 @@ package repositories
 import (
 	"context"
 	"fmt"
-	"github.com/fwidjaya20/regional-administration/internal/databases/models/province"
+	"github.com/fwidjaya20/regional-administration/internal/databases/models/regional"
 	"github.com/fwidjaya20/regional-administration/internal/globals"
 	"github.com/jmoiron/sqlx"
 	"strings"
@@ -11,12 +11,12 @@ import (
 
 type postgres struct {}
 
-func (p *postgres) GetProvincesByCode(ctx context.Context, code []string) ([]*province.Model, error) {
-	var result []*province.Model
+func (p *postgres) GetVillages(ctx context.Context, code []string, name string) ([]*regional.Model, error) {
+	var result []*regional.Model
 	var err error
 	var rows *sqlx.Rows
 
-	query, args := p.buildGetProvinceByCodeQuery(code)
+	query, args := p.buildGetVillageQuery(code, name)
 	rows, err = globals.GetQuery(ctx).NamedQueryxContext(ctx, query, args)
 
 	if nil != err {
@@ -24,33 +24,7 @@ func (p *postgres) GetProvincesByCode(ctx context.Context, code []string) ([]*pr
 	}
 
 	for rows.Next() {
-		var model province.Model
-		err = rows.StructScan(&model)
-		if nil != err {
-			return nil, err
-		}
-		result = append(result, &model)
-	}
-
-	_ = rows.Close()
-
-	return result, err
-}
-
-func (p *postgres) GetProvincesByName(ctx context.Context, name string) ([]*province.Model, error) {
-	var result []*province.Model
-	var err error
-	var rows *sqlx.Rows
-
-	query, args := p.buildGetProvinceByNameQuery(name)
-	rows, err = globals.GetQuery(ctx).NamedQueryxContext(ctx, query, args)
-
-	if nil != err {
-		return nil, err
-	}
-
-	for rows.Next() {
-		var model province.Model
+		var model regional.Model
 		err = rows.StructScan(&model)
 		if nil != err {
 			return nil, err
@@ -67,26 +41,16 @@ func NewProvinceRepository() Interface {
 	return &postgres{}
 }
 
-func (p *postgres) buildGetProvinceByCodeQuery(code []string) (string, interface{}) {
+func (p *postgres) buildGetVillageQuery(code []string, name string) (string, interface{}) {
 	var query strings.Builder
 	var args = make(map[string]interface{})
 
 	query.WriteString(fmt.Sprintf(`%s`, p.buildRegionJoinQuery()))
+	query.WriteString(`WHERE v."name" ILIKE '%` + name + `%' `)
 
 	if len(code) > 0 {
-		query.WriteString(`WHERE p."code" IN `)
-		query.WriteString(`('` + strings.Join(code, `','`) + `')`)
+		query.WriteString(`AND v."code" IN ('` + strings.Join(code, `','`) + `')`)
 	}
-
-	return query.String(), args
-}
-
-func (p *postgres) buildGetProvinceByNameQuery(name string) (string, interface{}) {
-	var query strings.Builder
-	var args = make(map[string]interface{})
-
-	query.WriteString(fmt.Sprintf(`%s`, p.buildRegionJoinQuery()))
-	query.WriteString(`WHERE p."name" LIKE '%` + name + `%'`)
 
 	return query.String(), args
 }

@@ -1,4 +1,4 @@
-package province
+package regional
 
 import "github.com/fwidjaya20/regional-administration/internal/databases/models"
 
