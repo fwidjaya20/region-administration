@@ -189,6 +189,6 @@ INSERT INTO public."villages" ("code", "name", "postal", "created_by") VALUES
 ('61.01.18.2004', 'Serumpun', '79456', 'SEEDER'),
 ('61.01.18.2005', 'Salatiga', '79456', 'SEEDER'),
 ('61.01.19.2001', 'Gelik', '79451', 'SEEDER'),
-('61.01.19.2001', 'Seranggam', '79451', 'SEEDER'),
-('61.01.19.2001', 'Selakau Tua', '79451', 'SEEDER'),
-('61.01.19.2001', 'Buduk Sempadang', '79451', 'SEEDER');
+('61.01.19.2002', 'Seranggam', '79451', 'SEEDER'),
+('61.01.19.2003', 'Selakau Tua', '79451', 'SEEDER'),
+('61.01.19.2004', 'Buduk Sempadang', '79451', 'SEEDER');
