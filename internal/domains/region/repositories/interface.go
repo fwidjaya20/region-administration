@@ -6,5 +6,5 @@ import (
 )
 
 type Interface interface {
-	GetVillages(ctx context.Context, code []string, name string) ([]*regional.Model, error)
+	GetRegional(ctx context.Context) ([]*regional.Model, error)
 }

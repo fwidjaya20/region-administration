@@ -37,7 +37,7 @@ var defaultConfig = map[string]string{
 	DB_PORT:   "5432",
 	DB_NAME:   "regional_administration",
 	DB_USER:   "postgres",
-	DB_PASS:   "postgres",
+	DB_PASS:   "password",
 
 	// Migration and Seeder
 	MIGRATION_PATH: "internal/databases/migrations",

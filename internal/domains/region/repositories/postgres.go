@@ -11,12 +11,13 @@ import (
 
 type postgres struct {}
 
-func (p *postgres) GetVillages(ctx context.Context, code []string, name string) ([]*regional.Model, error) {
+func (p *postgres) GetRegional(ctx context.Context) ([]*regional.Model, error) {
 	var result []*regional.Model
 	var err error
 	var rows *sqlx.Rows
 
-	query, args := p.buildGetVillageQuery(code, name)
+	query, args := p.buildGetRegionalQuery()
+
 	rows, err = globals.GetQuery(ctx).NamedQueryxContext(ctx, query, args)
 
 	if nil != err {
@@ -41,16 +42,11 @@ func NewProvinceRepository() Interface {
 	return &postgres{}
 }
 
-func (p *postgres) buildGetVillageQuery(code []string, name string) (string, interface{}) {
+func (p *postgres) buildGetRegionalQuery() (string, interface{}) {
 	var query strings.Builder
 	var args = make(map[string]interface{})
 
 	query.WriteString(fmt.Sprintf(`%s`, p.buildRegionJoinQuery()))
-	query.WriteString(`WHERE v."name" ILIKE '%` + name + `%' `)
-
-	if len(code) > 0 {
-		query.WriteString(`AND v."code" IN ('` + strings.Join(code, `','`) + `')`)
-	}
 
 	return query.String(), args
 }
@@ -70,12 +66,20 @@ func (p *postgres) buildRegionJoinQuery() string {
 		`v."postal" as "postal_code"`,
 	}
 
+	var orderColumns = []string{
+		`p."code"`,
+		`r."code"`,
+		`d."code"`,
+		`v."code"`,
+	}
+
 	query.WriteString(`SELECT `)
 	query.WriteString(fmt.Sprintf(`%s `, strings.Join(columns, ",")))
 	query.WriteString(`FROM `)
 	query.WriteString(`public."provinces" p LEFT JOIN public."regencies" r ON p."code" = SUBSTRING(r."code", 1, 2) `)
 	query.WriteString(`LEFT JOIN public."districts" d ON r."code" = SUBSTRING(d."code", 1, 5) `)
 	query.WriteString(`LEFT JOIN public."villages" v ON d."code" = SUBSTRING(v."code", 1, 8) `)
+	query.WriteString(fmt.Sprintf(`ORDER BY %s ASC `, strings.Join(orderColumns, ",")))
 
 	return query.String()
 }

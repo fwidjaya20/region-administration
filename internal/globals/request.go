@@ -1,7 +1,6 @@
 package globals
 
 type RegionalRequest struct {
-	Scope string   `json:"scope"`
-	Code  []string `json:"code"`
-	Name  string   `json:"name"`
+	Scope         string `json:"scope"`
+	WithHierarchy bool   `json:"with_hierarchy"`
 }
